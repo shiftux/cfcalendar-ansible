@@ -1,0 +1,25 @@
+---
+- name: Check that authorized_keys exists
+  stat:
+    path: "{{authorized_keys_path}}"
+  register: stat_result
+
+- name: Create authorized_keys, if it doesnt exist already
+  file:
+    path: "{{authorized_keys_path}}"
+    state: touch
+    owner: "{{file_owner}}"
+    group: "{{file_group}}"
+    mode: "u=rw,g=r,o=r"
+  when: stat_result.stat.exists == False 
+
+- name: check wheter the authorized_keys file contains the tgdmosaa key
+  shell: cat "{{authorized_keys_path}}" | grep tgdmosaa@
+  register: grep_output
+  ignore_errors: true
+
+- name: insert the ssh key to authorized_keys
+  blockinfile:
+    block: "{{ lookup('file', '../files/tgdmosaa_id_rsa.pub') }}"
+    dest: "{{authorized_keys_path}}"
+  when: grep_output.stdout==""

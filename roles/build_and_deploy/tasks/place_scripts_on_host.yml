@@ -1,0 +1,15 @@
+---
+- copy:
+    src: ../files/do_backup.sh
+    dest: "{{cf_base_dir}}/mongo/data/"
+    owner: "{{file_owner}}"
+    group: "{{file_group}}"
+    mode: "u=rwx,g=rx,o=rx"
+
+- copy:
+    src: ../files/daily_backup_mail.sh
+    dest: "{{cf_base_dir}}/mongo/data/"
+    owner: "{{file_owner}}"
+    group: "{{file_group}}"
+    mode: "u=rwx,g=rx,o=rx"
+

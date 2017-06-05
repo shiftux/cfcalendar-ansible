@@ -1,0 +1,5 @@
+---
+
+- include: setup_folder_structure.yml
+- include: install_docker_components.yml
+- include: setup_ssh.yml

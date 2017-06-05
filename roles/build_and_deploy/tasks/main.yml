@@ -1,0 +1,10 @@
+--- 
+
+- include: build_meteor_tarball.yml
+- include: backup_and_cleanup_remote_host.yml
+- include: transfer_files_to_remote_host.yml
+- include: place_scripts_on_host.yml
+- include: setup_cron_jobs.yml
+- include: build_container_and_start.yml
+- include: check_containers_are_running.yml
+- include: cleanup.yml

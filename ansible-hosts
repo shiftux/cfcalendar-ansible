@@ -1,0 +1,21 @@
+[test]
+192.168.99.100 ansible_ssh_user=docker
+
+[test:vars]
+cf_base_dir=/home/docker/cfcalendar
+file_owner=docker
+file_group=staff
+virtual_host=192.168.99.100
+package_install_command='tce-load -wi'
+ssh_command='docker-machine ssh default'
+
+[prod]
+51.15.40.6 ansible_ssh_user=root
+
+[prod:vars]
+cf_base_dir=/root/cfcalendar
+file_owner=root
+file_group=root
+virtual_host=51.15.40.6,login.crossfittb.ch
+package_install_command='apt-get install -y'
+ssh_command='ssh root@51.15.40.6'

@@ -1,0 +1,17 @@
+---
+
+- name: create base directory
+  file: path={{cf_base_dir}} state=directory
+
+- name: create mongo directory
+  file: path={{cf_base_dir}}/mongo/data state=directory
+  
+- name: create mongo subdirectories
+  file: path={{cf_base_dir}}/mongo/data/{{item}} state=directory
+  with_items: 
+    - cfcalendar-admin-db-backup 
+    - configdb
+    - db
+
+- name: create meteor directory
+  file: path={{cf_base_dir}}/meteor state=directory

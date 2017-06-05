@@ -1,0 +1,4 @@
+---
+- name: remove build folder and contents
+  connection: local
+  file: path={{local_meteor_dir}}/build state=absent

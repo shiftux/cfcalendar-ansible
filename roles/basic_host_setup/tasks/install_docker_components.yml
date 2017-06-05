@@ -1,0 +1,31 @@
+---
+
+- name: get docker-compose version
+  shell: 'docker-compose --version'
+  register: docker_compose_version
+  ignore_errors: true
+
+- name: create the docker-compose bin file
+  become: true
+  file:
+    path: "{{docker_compose_dir}}"
+    state: touch
+    owner: root
+    group: root
+    mode: "u=rwx,g=rx,o=rx"
+  when: ( docker_compose_version | failed )
+
+- name: install docker-compose
+  become: true
+  shell: 'curl -sL https://github.com/docker/compose/releases/download/1.9.0/docker-compose-`uname -s`-`uname -m` -o "{{docker_compose_dir}}"'
+  when: ( docker_compose_version | failed )
+
+- name: get pip version
+  shell: 'pip --version'
+  register: pip_version
+  ignore_errors: true
+
+- name: install pip
+  become: true
+  shell: 'wget https://bootstrap.pypa.io/get-pip.py; python get-pip.py; pip install docker-py'
+  when: ( pip_version | failed )

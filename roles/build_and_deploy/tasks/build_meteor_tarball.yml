@@ -1,0 +1,8 @@
+---
+- name: create build directory
+  connection: local
+  file: path={{local_meteor_dir}}/build state=directory
+
+- name: build the meteor tarball
+  connection: local
+  shell: "cd {{local_meteor_dir}}; meteor build {{local_meteor_dir}}/build --server-only"

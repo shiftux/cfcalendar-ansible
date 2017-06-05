@@ -1,0 +1,6 @@
+---
+- name: setup the fixtures
+  connection: local
+  template:
+    src: "../templates/fixtures.j2"
+    dest: "{{local_meteor_dir}}/server/fixtures.js"

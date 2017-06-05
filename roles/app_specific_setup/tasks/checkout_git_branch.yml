@@ -1,0 +1,8 @@
+---
+- name: make sure the prod environment only gets the master branch
+  connection: local
+  git:
+    repo: git@github.com:shiftux/cfcalendar.git
+    dest: "{{local_meteor_dir}}/"
+    version: master
+  when: "'prod' in group_names"

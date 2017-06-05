@@ -1,0 +1,27 @@
+---
+- name: transfer tarball
+  copy:
+    src: "{{local_meteor_dir}}/build/cfcalendar.tar.gz"
+    dest: "{{cf_base_dir}}/meteor"
+    owner: "{{file_owner}}"
+    group: "{{file_group}}"
+    mode: "u=rw,g=r,o=r"
+
+- name: untar server tarball
+  command: "tar -xzvf {{cf_base_dir}}/meteor/cfcalendar.tar.gz -C {{cf_base_dir}}/meteor/"
+
+- name: transfer Dockerfile
+  copy:
+    src: ../files/Dockerfile
+    dest: "{{cf_base_dir}}/meteor/bundle/Dockerfile"
+    owner: "{{file_owner}}"
+    group: "{{file_group}}"
+    mode: "u=rw,g=r,o=r"
+
+- name: transfer docker-compose file
+  template:
+    src: "../templates/docker-compose.j2"
+    dest: "{{cf_base_dir}}/meteor/bundle/docker-compose.yml"
+    owner: "{{file_owner}}"
+    group: "{{file_group}}"
+    mode: "u=rw,g=r,o=r"

@@ -1,0 +1,3 @@
+---
+docker_compose_dir: /usr/local/bin/docker-compose
+authorized_keys_path: "{{cf_base_dir}}/../.ssh/authorized_keys"

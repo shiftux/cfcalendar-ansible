@@ -1,0 +1,27 @@
+---
+- name: backup the remote app tar file
+  shell: "cp {{cf_base_dir}}/meteor/cfcalendar.tar.gz {{cf_base_dir}}/cfcalendar.tar.gz.$(date +%F.%T)"
+  ignore_errors: true
+
+- name: stop and remove the docker app container
+  docker_container:
+    name: meteor_server
+    state: absent
+
+# - name: remove docker app container
+#   shell: "docker rm meteor_server"
+#   ignore_errors: true
+
+- name: stop docker mongodb container !!!!!!! DANGER !!!!!!!
+  docker_container:
+    name: mongodb_server
+    state: absent
+  when: false # !!!!!!! DANGER !!!!!!!
+
+- name: remove the meteor directory and all files
+  file:
+    state: absent
+    path: "{{cf_base_dir}}/meteor/"
+
+- name: create the meteor directory
+  file: path="{{cf_base_dir}}/meteor/" state=directory

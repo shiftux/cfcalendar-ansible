@@ -1,0 +1,93 @@
+############################################################
+###### manually_update_email_in_mongo
+############################################################
+use admin
+db.users.find({ "emails.address" : 'adrian.grunder@visiocom.ch' });
+db.users.updateOne({_id: 'Lt4q4gbGq7WXzFxx5'}, {$set: {"emails.0.verified": true}})
+
+
+############################################################
+###### update_coach_of_events
+############################################################
+###### monday is 2, etc.
+###### !!!!!!!!!! make sure to double check the starting hour! there is some iso-date problem, all is shifted 2h...
+###### !!!!!!!!!! make sure to double end date, there is a daylight saving time issue!
+use admin
+modify_ids=db.events.aggregate([
+	{$project: 
+		{type: "$type", dow : {$dayOfWeek : "$start"}, date: "$start", hour : {$hour: "$start"}, coach: "$coach"}
+	}, 
+	{$match:
+		{dow:{$in:[2]}, hour:16, date:{$lt:new Date("2017-10-17")}, type: "Workout of the Day", coach: "Tom"}
+	} 
+]).map(function( event ) {
+	return event._id
+})
+db.events.updateMany({ "_id": { "$in": modify_ids }}, { $set: {coach: "Adrian"}});
+
+#, {$group: {_id : null, count : {$sum : 1}}}
+
+#### sommer - winterzeit 
+29.10.17
+25.03.18
+28.10.18
+
+### ädu coach, Mo 18h & 19h
+use admin
+modify_ids=db.events.aggregate([
+	{$project: 
+		{type: "$type", dow : {$dayOfWeek : "$start"}, date: "$start", hour : {$hour: "$start"}, coach: "$coach"}
+	}, 
+	{$match:
+		{dow:{$in:[2]}, hour:17, date:{$lt:new Date("2017-10-17")}, type: "Workout of the Day", coach: "Tom"}
+	} 
+]).map(function( event ) {
+	return event._id
+})
+db.events.updateMany({ "_id": { "$in": modify_ids }}, { $set: {coach: "Adrian"}});
+
+### Sybille coach, Do 18h & 19h
+use admin
+modify_ids=db.events.aggregate([
+	{$project: 
+		{type: "$type", dow : {$dayOfWeek : "$start"}, date: "$start", hour : {$hour: "$start"}, coach: "$coach"}
+	}, 
+	{$match:
+		{dow:{$in:[5]}, hour:17, date:{$lt:new Date("2017-10-17")}, type: "Workout of the Day", coach: "Tom"}
+	} 
+]).map(function( event ) {
+	return event._id
+})
+db.events.updateMany({ "_id": { "$in": modify_ids }}, { $set: {coach: "Sybille"}});
+
+### Christine coach, Fr 17h 
+use admin
+modify_ids=db.events.aggregate([
+	{$project: 
+		{type: "$type", dow : {$dayOfWeek : "$start"}, date: "$start", hour : {$hour: "$start"}, coach: "$coach"}
+	}, 
+	{$match:
+		{dow:{$in:[6]}, hour:15, date:{$lt:new Date("2017-10-17")}, type: "Open Gym", coach: "Tom"}
+	} 
+]).map(function( event ) {
+	return event._id
+})
+db.events.updateMany({ "_id": { "$in": modify_ids }}, { $set: {coach: "Christine"}});
+
+### Christine/claudia coach, So 14h 
+use admin
+modify_ids=db.events.aggregate([
+	{$project: 
+		{type: "$type", dow : {$dayOfWeek : "$start"}, date: "$start", hour : {$hour: "$start"}, coach: "$coach"}
+	}, 
+	{$match:
+		{dow:{$in:[1]}, hour:12, date:{$lt:new Date("2017-10-17")}, type: "Open Gym", coach: "Tom"}
+	} 
+]).map(function( event ) {
+	return event._id
+})
+db.events.updateMany({ "_id": { "$in": modify_ids }}, { $set: {coach: "Christine / Claudia"}});
+
+### Tobias -> Tobs
+use admin
+db.events.updateMany({coach: "Tobias"}, {$set:{coach:"Tobs"}})

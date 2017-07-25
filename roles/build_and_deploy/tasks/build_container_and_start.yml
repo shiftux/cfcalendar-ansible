@@ -1,4 +1,19 @@
 ---
+- name: start nginx container
+  # http://stackoverflow.com/questions/38033695/setting-nginx-reverse-proxy-to-serve-from-another-docker-container
+  docker_container:
+    name: nginx_proxy
+    image: jwilder/nginx-proxy
+    state: started
+    restart: yes
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /etc/letsencrypt/archive/login.crossfittb.ch:/etc/nginx/certs
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      # - /root/nginx:/etc/nginx/conf.d/
+
 - name: build app container
   shell: "cd {{cf_base_dir}}/meteor/bundle; docker-compose build --no-cache meteor_server"
 

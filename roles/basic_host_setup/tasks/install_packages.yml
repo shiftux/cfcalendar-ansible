@@ -1,0 +1,10 @@
+---
+
+- name: "install postfix"
+  package: name=postfix state=present
+
+- name: "setup postfix"
+  copy:
+    src: ../files/main.cf
+    dest: /etc/postfix
+    mode: "u=rw,g=r,o=r"

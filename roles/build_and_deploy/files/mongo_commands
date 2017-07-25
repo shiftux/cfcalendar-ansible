@@ -5,6 +5,11 @@ use admin
 db.users.find({ "emails.address" : 'adrian.grunder@visiocom.ch' });
 db.users.updateOne({_id: 'Lt4q4gbGq7WXzFxx5'}, {$set: {"emails.0.verified": true}})
 
+############################################################
+###### find an event
+############################################################
+use admin
+db.events.find({type: "Workout of the Day", start: {$gte: startTime, $lt: endTime}})
 
 ############################################################
 ###### update_coach_of_events
@@ -46,7 +51,7 @@ modify_ids=db.events.aggregate([
 })
 db.events.updateMany({ "_id": { "$in": modify_ids }}, { $set: {coach: "Adrian"}});
 
-### Sybille coach, Do 18h & 19h
+### Sibylle coach, Do 18h & 19h
 use admin
 modify_ids=db.events.aggregate([
 	{$project: 
@@ -58,7 +63,7 @@ modify_ids=db.events.aggregate([
 ]).map(function( event ) {
 	return event._id
 })
-db.events.updateMany({ "_id": { "$in": modify_ids }}, { $set: {coach: "Sybille"}});
+db.events.updateMany({ "_id": { "$in": modify_ids }}, { $set: {coach: "Sibylle"}});
 
 ### Christine coach, Fr 17h 
 use admin

@@ -3,6 +3,15 @@
   shell: "cp {{cf_base_dir}}/meteor/cfcalendar.tar.gz {{cf_base_dir}}/cfcalendar.tar.gz.$(date +%F.%T)"
   ignore_errors: true
 
+- name: check if mongodb_server is running
+  shell: "docker ps | grep mongodb_server"
+  register: mongodb_server_running
+  ignore_errors: true
+
+- name: backup the DB
+  shell: /usr/bin/docker exec -i mongodb_server /bin/sh /data/do_backup.sh
+  when: mongodb_server_running.stdout != ""
+
 - name: stop and remove the docker app container
   docker_container:
     name: meteor_server

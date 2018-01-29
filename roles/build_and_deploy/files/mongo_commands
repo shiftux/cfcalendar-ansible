@@ -102,6 +102,87 @@ modify_ids=db.events.aggregate([
 })
 db.events.updateMany({ "_id": { "$in": modify_ids }}, { $set: {coach: "Christine / Claudia"}});
 
+############################################################
+###### update_coach_name_of_events
+############################################################
+
+
 ### Tobias -> Tobs
 use admin
 db.events.updateMany({coach: "Tobias"}, {$set:{coach:"Tobs"}})
+
+############################################################
+###### create events
+############################################################
+ruby script:
+
+require 'JSON'
+require 'date'
+require 'time'
+
+def create_event(date)
+  startingHour = 14
+  duration = 90 # minutes
+  maxParticipants = 12
+  coach = "Tom"
+  startTime = Time.parse((date.to_datetime + (startingHour/24.0)).strftime("%Y-%m-%dT%H:%M:00"))
+  endTime = Time.parse((date.to_datetime + (startingHour/24.0) + (duration/1440.0)).to_datetime.strftime("%Y-%m-%dT%H:%M:00"))
+  randgen = [('a'..'z'), ('A'..'Z'),('0'..'9')].map(&:to_a).flatten
+  event = {
+  	_id: (0...16).map { randgen[rand(randgen.length)] }.join,
+    title: 'Open Gym', # Workout of the Day, Open Gym, Yoga
+    type: 'Open Gym', # Workout of the Day
+    start: "ISODate('#{startTime.strftime("%Y-%m-%dT%H:%M:00%z")}')",
+    end: "ISODate('#{endTime.strftime("%Y-%m-%dT%H:%M:00%z")}')",
+    maxParticipants: maxParticipants,
+    coach: coach,
+    participants: [  ],
+    participantsCount: 0,
+    waitingList: [ ]
+  }
+  return event
+end
+
+date = Date.today+14
+endDate = Time.new(2025,5,30).to_date
+dayOfWeek = 0 # sunday is 0
+events = []
+while (date < endDate)
+  if date.wday == dayOfWeek
+    events.push(create_event(date))
+  end
+  date = date+1
+end
+
+File.open("output.json","w") do |f|
+  f.write(events.to_json)
+end
+
+####### in shell!
+sed -i -e 's/\"ISOD/ISOD/g' output.json; sed -i -e "s/\')\"/\')/g" output.json
+scp output.json root@51.15.40.6:/root/cfcalendar/mongo/data
+
+###### on scwssh
+docker exec -i mongodb_server /bin/sh /data/do_backup.sh
+docker exec -it mongodb_server /bin/sh
+cd /data; mongoimport --jsonArray --db admin --collection events --file output.json
+
+
+############################################################
+###### delete multiple events of a type
+############################################################
+###### monday is 2, etc.
+###### !!!!!!!!!! make sure to double check the starting hour! there is some iso-date problem, all is shifted 2h...
+###### !!!!!!!!!! make sure to double end date, there is a daylight saving time issue!
+use admin
+remove_ids=db.events.aggregate([
+	{$project:
+		{type: "$type", dow : {$dayOfWeek : "$start"}, date: "$start", coach: "$coach"}
+	},
+	{$match:
+		{dow:{$in:[1]}, date:{$gt:new Date("2018-02-05")}, type: "Open Gym"}
+	}
+]).map(function( event ) {
+	return event._id
+})
+db.events.remove({ "_id": { "$in": remove_ids }});

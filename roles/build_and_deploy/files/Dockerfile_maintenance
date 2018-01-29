@@ -1,0 +1,5 @@
+# build with: docker build -t maintenance-webserver:v1 .
+# Run with: docker run -dit --name maintenance-server --expose 80 -e "VIRTUAL_HOST=51.15.40.6,login.crossfittb.ch" -e "VIRTUAL_PROTO=http" -e "VIRTUAL_PORT=80"  maintenance-webserver:v1
+
+FROM httpd:2.4
+COPY . /usr/local/apache2/htdocs/

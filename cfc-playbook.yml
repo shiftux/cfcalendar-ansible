@@ -4,7 +4,8 @@
   hosts: all
   vars:
     local_meteor_dir: /Users/tgdmosaa/development/cfcalendar
-  roles: 
+  roles:
     - app_specific_setup
     - basic_host_setup
     - build_and_deploy
+    - setup_maintenance_service

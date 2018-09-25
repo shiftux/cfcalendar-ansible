@@ -1,0 +1,4 @@
+---
+
+- include: setup_file_structure.yml
+- include: create_image.yml

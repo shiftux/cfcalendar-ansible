@@ -1,0 +1,8 @@
+---
+
+- name: Build maintenance docker image
+  docker_image:
+    path: "{{cf_base_dir}}/maintenance"
+    state: present
+    tag: 1
+    name: maintenance_image

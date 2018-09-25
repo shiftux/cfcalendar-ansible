@@ -1,0 +1,30 @@
+- name: create base directory
+  file: path={{cf_base_dir}}/maintenance/src state=directory
+
+- copy:
+    src: ../files/Dockerfile
+    dest: "{{cf_base_dir}}/maintenance"
+    owner: "{{file_owner}}"
+    group: "{{file_group}}"
+    mode: "u=rwx,g=rx,o=rx"
+
+- copy:
+    src: ../files/run_command
+    dest: "{{cf_base_dir}}/maintenance"
+    owner: "{{file_owner}}"
+    group: "{{file_group}}"
+    mode: "u=rwx,g=rx,o=rx"
+
+- copy:
+    src: ../files/nginx_config
+    dest: "{{cf_base_dir}}/maintenance/src"
+    owner: "{{file_owner}}"
+    group: "{{file_group}}"
+    mode: "u=rwx,g=rx,o=rx"
+
+- copy:
+    src: ../files/maintenance.html
+    dest: "{{cf_base_dir}}/maintenance/src"
+    owner: "{{file_owner}}"
+    group: "{{file_group}}"
+    mode: "u=rwx,g=rx,o=rx"

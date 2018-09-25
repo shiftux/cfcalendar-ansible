@@ -1,0 +1,1 @@
+docker run --rm -e "VIRTUAL_HOST=51.15.40.6,login.crossfittb.ch" -e "VIRTUAL_PROTO=http" -e "VIRTUAL_PORT=3000" --expose=3000 --network="bundle_default" --name maintenance maintenance_image:1

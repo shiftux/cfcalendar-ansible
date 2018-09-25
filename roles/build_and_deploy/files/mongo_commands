@@ -102,6 +102,20 @@ modify_ids=db.events.aggregate([
 })
 db.events.updateMany({ "_id": { "$in": modify_ids }}, { $set: {coach: "Christine / Claudia"}});
 
+### Claudia coach, alle Freitage
+use admin
+modify_ids=db.events.aggregate([
+	{$project:
+		{dow : {$dayOfWeek : "$start"}, date: "$start", coach: "$coach"}
+	},
+	{$match:
+		{dow:{$in:[6]}, date:{$gt:new Date("2018-01-31")}, coach: "Tom"}
+	}
+]).map(function( event ) {
+	return event._id
+})
+db.events.updateMany({ "_id": { "$in": modify_ids }}, { $set: {coach: "Claudia"}});
+
 ############################################################
 ###### update_coach_name_of_events
 ############################################################

@@ -12,6 +12,12 @@ db.users.updateOne({_id: 'Lt4q4gbGq7WXzFxx5'}, {$set: {"emails.0.verified": true
 db.users.find({ "profile.lastName" : 'Montanari' });
 
 ############################################################
+###### add an entry 
+############################################################
+
+db.transactions.insertOne({"userId": "ncWR4PWbp7cNx4tkj", "modification": 1})
+
+############################################################
 ###### find and update an event
 ############################################################
 use admin

@@ -1,0 +1,157 @@
+require 'JSON'
+require 'date'
+require 'time'
+
+$events = []
+
+def create_event_details(type, date, title, startH, duration, maxParticipants, coach)
+  startingHour = startH
+  duration = duration
+  maxParticipants = maxParticipants
+  coach = coach
+  startTime = Time.parse((date.to_datetime + (startingHour/24.0)).strftime("%Y-%m-%dT%H:%M:00"))
+  endTime = Time.parse((date.to_datetime + (startingHour/24.0) + (duration/1440.0)).to_datetime.strftime("%Y-%m-%dT%H:%M:00"))
+  randgen = [('a'..'z'), ('A'..'Z'),('0'..'9')].map(&:to_a).flatten
+  event = {
+  	_id: (0...16).map{ randgen[rand(randgen.length)] }.join,
+    title: title,
+    type: type,
+    start: "ISODate('#{startTime.strftime("%Y-%m-%dT%H:%M:00%z")}')",
+    end: "ISODate('#{endTime.strftime("%Y-%m-%dT%H:%M:00%z")}')",
+    maxParticipants: maxParticipants,
+    coach: coach,
+    participants: [  ],
+    participantsCount: 0,
+    waitingList: [ ]
+  }
+  return event
+end
+
+def create_OG(date, startH, duration, maxParticipants, coach)
+	$events.push(create_event_details('Open Gym', date, 'Open Gym', startH, duration, maxParticipants, coach))
+end
+
+def create_WOD(date, startH, duration, maxParticipants, coach)
+	$events.push(create_event_details('Workout of the Day', date,'Workout of the Day', startH, duration, maxParticipants, coach))
+end
+
+def fill_sunday(date)
+	create_OG(date,11,90,12,"Pinar")
+end
+def fill_monday(date)
+	create_OG(date,10,120,12,"Tom")
+	create_OG(date,12,60,8,"Tom")
+	create_WOD(date,12,60,12,"Tom")
+	create_OG(date,15,120,12,"Tom")
+	create_OG(date,17,60,8,"Tom")
+	create_WOD(date,17,60,12,"Tom")
+	create_OG(date,18,60,8,"Lisa")
+	create_WOD(date,18,60,12,"Lisa")
+	create_OG(date,19,60,8,"Lisa")
+	create_WOD(date,19,60,12,"Lisa")
+end
+def fill_tuesday(date)
+	create_OG(date,6.5,90,8,"Tom")
+	create_WOD(date,6.5,60,12,"Tom")
+	create_WOD(date,10,60,12,"Tom")
+	create_OG(date,10,60,8,"Tom")
+	create_OG(date,11,60,8,"Tom")
+	create_OG(date,12,60,8,"Tom")
+	create_WOD(date,12,60,12,"Tom")
+	create_OG(date,15,120,12,"Tom")
+	create_WOD(date,17,60,12,"Tom")
+	create_OG(date,17,60,8,"Tom")
+	create_WOD(date,18,60,12,"Tom")
+	create_OG(date,18,60,8,"Tom")
+	create_WOD(date,19,60,12,"Tom")
+	create_OG(date,19,60,8,"Tom")
+end
+def fill_wednesday(date)
+	create_OG(date,10,120,12,"Tom")
+	create_WOD(date,12,60,12,"Tom")
+	create_OG(date,12,60,8,"Tom")
+	create_OG(date,15,120,12,"Tom")
+	create_WOD(date,17,60,12,"Tom")
+	create_OG(date,17,60,8,"Tom")
+	create_WOD(date,18,60,12,"Tom")
+	create_OG(date,18,60,8,"Tom")
+	end
+def fill_thursday(date)
+	create_WOD(date,6.5,60,12,"Tom")
+	create_OG(date,6.5,90,8,"Tom")
+	create_OG(date,10,120,12,"Tom")
+	create_WOD(date,12,60,12,"Tom")
+	create_OG(date,12,60,8,"Tom")
+	create_OG(date,15,120,12,"Tom")
+	create_WOD(date,17,60,12,"Tom")
+	create_OG(date,17,60,8,"Tom")
+	create_WOD(date,18,60,12,"Peter")
+	create_OG(date,18,60,8,"Peter")
+	create_WOD(date,19,60,12,"Peter")
+	create_OG(date,19,60,8,"Peter")
+end
+def fill_friday(date)
+	create_OG(date,10,120,12,"Kerstin")
+  create_WOD(date,12,60,12,"Kerstin")
+  create_OG(date,12,60,8,"Kerstin")
+  create_OG(date,15,120,12,"Kerstin")
+  create_OG(date,17,60,8,"Kerstin")
+  create_WOD(date,18,60,12,"Kerstin")
+  create_OG(date,18,60,8,"Kerstin")
+end
+def fill_saturday(date)
+  create_WOD(date,9,60,12,"Tom")
+  create_OG(date,9,60,8,"Tom")
+  create_WOD(date,10,60,12,"Tom")
+  create_OG(date,10,60,8,"Tom")
+  create_WOD(date,11,60,12,"Tom")
+  create_OG(date,11,60,8,"Tom")
+end
+
+date = Time.new(2025,12,31).to_date
+endDate = Time.new(2026,12,31).to_date
+puts "date is #{date}, weekday is #{date.wday}"
+while (date < endDate)
+	case date.wday # sunday is 0
+		when 0
+			fill_sunday(date)
+		when 1
+			fill_monday(date)
+		when 2
+			fill_tuesday(date)
+		when 3
+			fill_wednesday(date)
+		when 4
+			fill_thursday(date)
+		when 5
+			fill_friday(date)
+		when 6
+			fill_saturday(date)
+		else
+			"Error: not a valid weekday"
+	end
+  date = date + 1
+	puts "date is now #{date}, weekday is now #{date.wday}"
+end
+
+File.open("output.json","w") do |f|
+  f.write($events.to_json)
+ensure
+	f.close
+end
+
+############################################################
+###### in shell!
+############################################################
+# sed -i -e 's/\"ISOD/ISOD/g' output.json; sed -i -e "s/')\"/')/g" output.json
+# scp output.json root@51.15.109.225:/root/cfcalendar/mongo/data
+# %x{ sed -i -e 's/\"ISOD/ISOD/g' output.json}
+# %x{ sed -i -e "s/\')\"/\')/g" output.json}
+
+############################################################
+###### on host
+############################################################
+# docker exec -i mongodb_server /bin/sh /data/do_backup.sh
+# docker exec -it mongodb_server /bin/sh
+# cd /data; mongoimport --jsonArray --db admin --collection events --file output.json
+

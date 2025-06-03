@@ -12,6 +12,12 @@ db.users.updateOne({_id: 'Lt4q4gbGq7WXzFxx5'}, {$set: {"emails.0.verified": true
 db.users.find({ "profile.lastName" : 'Montanari' });
 
 ############################################################
+###### add an entry
+############################################################
+
+db.transactions.insertOne({"userId": "ncWR4PWbp7cNx4tkj", "modification": 1})
+
+############################################################
 ###### find and update an event
 ############################################################
 use admin
@@ -149,7 +155,7 @@ File.open("output.json","w") do |f|
   f.write(events.to_json)
 end
 
-####### in shell!
+####### in shell
 sed -i -e 's/\"ISOD/ISOD/g' output.json; sed -i -e "s/')\"/')/g" output.json
 scp output.json root@51.15.40.6:/root/cfcalendar/mongo/data
 
@@ -186,6 +192,18 @@ remove_ids=db.events.aggregate([
 	},
 	{$match:
 		{type: "Advanced Klasse", coach: "Tobs", date:{$gt:new Date("2018-10-14")}}
+	}
+]).map(function( event ) {
+	return event._id
+})
+db.events.remove({ "_id": { "$in": remove_ids }});
+
+
+############ remove all events after a certain date
+use admin
+remove_ids=db.events.aggregate([
+	{$match:
+		{start:{$gt:new Date("2025-07-01")}}
 	}
 ]).map(function( event ) {
 	return event._id
